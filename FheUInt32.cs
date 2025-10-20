@@ -52,7 +52,7 @@ public sealed class FheUInt32 : FheHandle
         }
     }
 
-    private static FheUInt32 Oper1<A>(Oper1Func<A> func, A a)
+    private static FheUInt32 Oper1<A>(OperFunc<A> func, A a)
     {
         int error = func(a, out nint out_value);
         if (error != 0)
@@ -60,7 +60,7 @@ public sealed class FheUInt32 : FheHandle
         return new FheUInt32(out_value);
     }
 
-    private static FheUInt32 Oper2<A, B>(Oper2Func<A, B> func, A a, B b)
+    private static FheUInt32 Oper2<A, B>(OperFunc<A, B> func, A a, B b)
     {
         int error = func(a, b, out nint out_value);
         if (error != 0)

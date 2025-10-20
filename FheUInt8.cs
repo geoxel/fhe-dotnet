@@ -52,7 +52,7 @@ public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
         }
     }
 
-    private static FheUInt8 Oper1<A>(Oper1Func<A> func, A a)
+    private static FheUInt8 Oper1<A>(OperFunc<A> func, A a)
     {
         int error = func(a, out nint out_value);
         if (error != 0)
@@ -60,7 +60,7 @@ public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
         return new FheUInt8(out_value);
     }
 
-    private static FheUInt8 Oper2<A, B>(Oper2Func<A, B> func, A a, B b) =>
+    private static FheUInt8 Oper2<A, B>(OperFunc<A, B> func, A a, B b) =>
         new FheUInt8(Oper2n(func, a, b));
 
     public static FheUInt8 operator +(FheUInt8 value1, FheUInt8 value2) =>

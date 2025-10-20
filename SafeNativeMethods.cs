@@ -38,6 +38,18 @@ internal static partial class SafeNativeMethods
     [LibraryImport(LibraryPath, EntryPoint = "server_key_destroy")]
     public static partial int ServerKey_Destroy(nint server_key);
 
+    [LibraryImport(LibraryPath, EntryPoint = "compact_public_key_destroy")]
+    public static partial int CompactPublicKey_Destroy(nint value);
+
+    [LibraryImport(LibraryPath, EntryPoint = "compact_public_key_safe_deserialize")]
+    public static partial int CompactPublicKey_Deserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
+
+    [LibraryImport(LibraryPath, EntryPoint = "compact_pke_crs_destroy")]
+    public static partial int CompactPkeCrs_Destroy(nint value);
+
+    [LibraryImport(LibraryPath, EntryPoint = "compact_pke_crs_safe_deserialize")]
+    public static partial int CompactPkeCrs_Deserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
+
     [StructLayout(LayoutKind.Sequential)]
     public struct DynamicBuffer
     {

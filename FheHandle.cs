@@ -35,10 +35,20 @@ public abstract class FheHandle : IDisposable
 
     protected abstract void DestroyHandle(nint handle);
 
-    internal delegate int Oper1Func<in T1>(T1 arg1, out nint result);
-    internal delegate int Oper2Func<in T1, in T2>(T1 arg1, T2 arg2, out nint result);
+    internal const ulong SAFE_SER_SIZE_LIMIT = 1024UL * 1024 * 1024 * 2;
 
-    internal static nint Oper2n<A, B>(Oper2Func<A, B> func, A a, B b)
+    internal delegate int OperFunc<in T1>(T1 arg1, out nint result);
+    internal delegate int OperFunc<in T1, in T2>(T1 arg1, T2 arg2, out nint result);
+
+    internal static nint Oper1n<A>(OperFunc<A> func, A a)
+    {
+        int error = func(a, out nint out_value);
+        if (error != 0)
+            throw new FheException(error);
+        return out_value;
+    }
+
+    internal static nint Oper2n<A, B>(OperFunc<A, B> func, A a, B b)
     {
         int error = func(a, b, out nint out_value);
         if (error != 0)
@@ -52,4 +62,5 @@ public abstract class FheHandle : IDisposable
         if (error != 0)
             throw new FheException(error);
     }
+   
 }

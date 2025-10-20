@@ -55,7 +55,7 @@ public sealed class FheBool : FheHandle, IEquatable<FheBool>
         }
     }
 
-    private static FheBool Oper1<A>(Oper1Func<A> func, A a)
+    private static FheBool Oper1<A>(OperFunc<A> func, A a)
     {
         int error = func(a, out nint out_value);
         if (error != 0)
@@ -63,7 +63,7 @@ public sealed class FheBool : FheHandle, IEquatable<FheBool>
         return new FheBool(out_value);
     }
 
-    private static FheBool Oper2<A, B>(Oper2Func<A, B> func, A a, B b)
+    private static FheBool Oper2<A, B>(OperFunc<A, B> func, A a, B b)
     {
         int error = func(a, b, out nint out_value);
         if (error != 0)
