@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Fhe;
+﻿namespace Fhe;
 
 public sealed class FheException : Exception
 {
-    public int Error { get; private set; }
+    public int Error { get; }
 
     public FheException()
     {

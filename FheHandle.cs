@@ -28,9 +28,8 @@ public abstract class FheHandle : IDisposable
     protected virtual void Dispose(bool disposing)
     {
         nint handle = Interlocked.CompareExchange(ref _handle, value: IntPtr.Zero, comparand: _handle);
-
-        if (_handle != IntPtr.Zero)
-            DestroyHandle(_handle);
+        if (handle != IntPtr.Zero)
+            DestroyHandle(handle);
     }
 
     protected abstract void DestroyHandle(nint handle);
