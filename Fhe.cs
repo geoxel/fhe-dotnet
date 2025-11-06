@@ -1,8 +1,4 @@
-﻿using System;
-using System.Dynamic;
-using System.Threading;
-
-namespace Fhe;
+﻿namespace Fhe;
 
 public sealed class Fhe : IDisposable
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Fhe;
+﻿namespace Fhe;
 
 public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
 {
@@ -12,30 +10,26 @@ public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
     }
 
     protected override void DestroyHandle(nint handle) =>
-        SafeNativeMethods.UInt8_Destroy(handle);
+        SafeNativeMethods.UInt8.Destroy(handle);
 
     public static FheUInt8 Encrypt(byte value)
     {
-        int error = SafeNativeMethods.UInt8_Encrypt(value, Fhe.Instance.ClientKey!.Handle, out nint out_value);
-        if (error != 0)
-            throw new FheException(error);
+        CheckError(SafeNativeMethods.UInt8.Encrypt(value, Fhe.Instance.ClientKey!.Handle, out nint out_value));
         return new FheUInt8(out_value);
     }
 
     public byte Decrypt()
     {
-        int error = SafeNativeMethods.UInt8_Decrypt(Handle, Fhe.Instance.ClientKey!.Handle, out byte out_value);
-        if (error != 0)
-            throw new FheException(error);
+        CheckError(SafeNativeMethods.UInt8.Decrypt(Handle, Fhe.Instance.ClientKey!.Handle, out byte out_value));
         return out_value;
     }
 
     public byte[] Serialize()
     {
-        int error = SafeNativeMethods.UInt8_Serialize(Handle, out SafeNativeMethods.DynamicBuffer buffer);
-        if (error != 0)
-            throw new FheException(error);
-        return SafeNativeMethods.DynamicBuffer_ToArray(buffer);
+        CheckError(SafeNativeMethods.UInt8.Serialize(Handle, out SafeNativeMethods.DynamicBuffer buffer));
+        
+        using DynamicBuffer dynamicbuffer = new(buffer);
+        return dynamicbuffer.ToArray();
     }
 
     public static unsafe FheUInt8 Deserialize(byte[] data)
@@ -48,15 +42,13 @@ public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
                 length = data.Length,
             };
 
-            return Oper1(SafeNativeMethods.UInt8_Deserialize, buffer_view);
+            return Oper1(SafeNativeMethods.UInt8.Deserialize, buffer_view);
         }
     }
 
     private static FheUInt8 Oper1<A>(OperFunc<A> func, A a)
     {
-        int error = func(a, out nint out_value);
-        if (error != 0)
-            throw new FheException(error);
+        CheckError(func(a, out nint out_value));
         return new FheUInt8(out_value);
     }
 
@@ -64,82 +56,82 @@ public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
         new FheUInt8(Oper2n(func, a, b));
 
     public static FheUInt8 operator +(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Add, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.Add, value1.Handle, value2.Handle);
     public static FheUInt8 operator +(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_Add, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.Add, value1.Handle, value2);
     public static FheUInt8 operator +(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Add, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.Add, value2.Handle, value1);
     public void Add(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_AddAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.AddAssign(Handle, value.Handle));
 
     public static FheUInt8 operator -(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Sub, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.Sub, value1.Handle, value2.Handle);
     public static FheUInt8 operator -(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_Sub, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.Sub, value1.Handle, value2);
     public static FheUInt8 operator -(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Sub, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.Sub, value2.Handle, value1);
     public void Sub(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_SubAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.SubAssign(Handle, value.Handle));
 
     public static FheUInt8 operator *(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Mul, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.Mul, value1.Handle, value2.Handle);
     public static FheUInt8 operator *(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_Mul, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.Mul, value1.Handle, value2);
     public static FheUInt8 operator *(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Mul, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.Mul, value2.Handle, value1);
     public void Mul(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_MulAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.MulAssign(Handle, value.Handle));
 
     public static FheUInt8 operator /(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Div, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.Div, value1.Handle, value2.Handle);
     public static FheUInt8 operator /(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_Div, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.Div, value1.Handle, value2);
     public static FheUInt8 operator /(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Div, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.Div, value2.Handle, value1);
     public void Div(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_DivAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.DivAssign(Handle, value.Handle));
 
     public static FheUInt8 operator &(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_And, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.And, value1.Handle, value2.Handle);
     public static FheUInt8 operator &(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_And, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.And, value1.Handle, value2);
     public static FheUInt8 operator &(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_And, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.And, value2.Handle, value1);
     public void And(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_AndAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.AndAssign(Handle, value.Handle));
 
     public static FheUInt8 operator |(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Or, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.Or, value1.Handle, value2.Handle);
     public static FheUInt8 operator |(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_Or, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.Or, value1.Handle, value2);
     public static FheUInt8 operator |(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Or, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.Or, value2.Handle, value1);
     public void Or(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_OrAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.OrAssign(Handle, value.Handle));
 
     public static FheUInt8 operator ^(FheUInt8 value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Xor, value1.Handle, value2.Handle);
+        Oper2(SafeNativeMethods.UInt8.Xor, value1.Handle, value2.Handle);
     public static FheUInt8 operator ^(FheUInt8 value1, byte value2) =>
-        Oper2(SafeNativeMethods.UInt8_Xor, value1.Handle, value2);
+        Oper2(SafeNativeMethods.UInt8.Xor, value1.Handle, value2);
     public static FheUInt8 operator ^(byte value1, FheUInt8 value2) =>
-        Oper2(SafeNativeMethods.UInt8_Xor, value2.Handle, value1);
+        Oper2(SafeNativeMethods.UInt8.Xor, value2.Handle, value1);
     public void Xor(FheUInt8 value) =>
-        Oper2nr(SafeNativeMethods.UInt8_XorAssign, Handle, value.Handle);
+        CheckError(SafeNativeMethods.UInt8.XorAssign(Handle, value.Handle));
 
     public static FheUInt8 operator !(FheUInt8 value) =>
-        Oper1(SafeNativeMethods.UInt8_Not, value.Handle);
+        Oper1(SafeNativeMethods.UInt8.Not, value.Handle);
     public static FheUInt8 operator -(FheUInt8 value) =>
-        Oper1(SafeNativeMethods.UInt8_Neg, value.Handle);
+        Oper1(SafeNativeMethods.UInt8.Neg, value.Handle);
 
     public FheUInt8 rotl(FheUInt8 count) =>
-        Oper2(SafeNativeMethods.UInt8_RotateLeft, Handle, count.Handle);
+        Oper2(SafeNativeMethods.UInt8.RotateLeft, Handle, count.Handle);
     public static FheUInt8 operator <<(FheUInt8 value, byte count) =>
-        count >= 8 ? Zero : Oper2(SafeNativeMethods.UInt8_ShiftLeft, value.Handle, count);
+        count >= 8 ? Zero : Oper2(SafeNativeMethods.UInt8.ShiftLeft, value.Handle, count);
 
     public FheUInt8 rotr(FheUInt8 count) =>
-        Oper2(SafeNativeMethods.UInt8_RotateRight, Handle, count.Handle);
+        Oper2(SafeNativeMethods.UInt8.RotateRight, Handle, count.Handle);
     public static FheUInt8 operator >>(FheUInt8 value, byte count) =>
-        count >= 8 ? Zero : Oper2(SafeNativeMethods.UInt8_ShiftRight, value.Handle, count);
+        count >= 8 ? Zero : Oper2(SafeNativeMethods.UInt8.ShiftRight, value.Handle, count);
 
     public override bool Equals(object? obj) =>
         obj is FheUInt8 other && Equals(other);
@@ -148,14 +140,14 @@ public sealed class FheUInt8 : FheHandle, IEquatable<FheUInt8>
         ((object?)other != null && (this == other).Decrypt());
 
     public static FheBool operator ==(FheUInt8 value1, FheUInt8 value2) =>
-        new FheBool(Oper2n(SafeNativeMethods.UInt8_Eq, value1.Handle, value2.Handle));
+        new FheBool(Oper2n(SafeNativeMethods.UInt8.Eq, value1.Handle, value2.Handle));
     public static FheBool operator ==(FheUInt8 value1, byte value2) =>
-        new FheBool(Oper2n(SafeNativeMethods.UInt8_Eq, value1.Handle, value2));
+        new FheBool(Oper2n(SafeNativeMethods.UInt8.Eq, value1.Handle, value2));
 
     public static FheBool operator !=(FheUInt8 value1, FheUInt8 value2) =>
-        new FheBool(Oper2n(SafeNativeMethods.UInt8_Ne, value1.Handle, value2.Handle));
+        new FheBool(Oper2n(SafeNativeMethods.UInt8.Ne, value1.Handle, value2.Handle));
     public static FheBool operator !=(FheUInt8 value1, byte value2) =>
-        new FheBool(Oper2n(SafeNativeMethods.UInt8_Ne, value1.Handle, value2));
+        new FheBool(Oper2n(SafeNativeMethods.UInt8.Ne, value1.Handle, value2));
 
     public override int GetHashCode() =>
         throw new InvalidOperationException();

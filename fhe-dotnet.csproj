@@ -8,6 +8,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Nethermind.Numerics.Int256" Version="1.3.6" />
+  </ItemGroup>
+
   <PropertyGroup Condition="$([System.OperatingSystem]::IsMacOS())">
     <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
   </PropertyGroup>

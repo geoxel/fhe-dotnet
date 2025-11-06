@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace Fhe;
+﻿namespace Fhe;
 
 public abstract class FheHandle : IDisposable
 {
@@ -36,30 +33,24 @@ public abstract class FheHandle : IDisposable
 
     internal const ulong SAFE_SER_SIZE_LIMIT = 1024UL * 1024 * 1024 * 2;
 
+    protected static void CheckError(int error)
+    {
+        if (error != 0)
+            throw new FheException(error);
+    }
+
     internal delegate int OperFunc<in T1>(T1 arg1, out nint result);
     internal delegate int OperFunc<in T1, in T2>(T1 arg1, T2 arg2, out nint result);
 
     internal static nint Oper1n<A>(OperFunc<A> func, A a)
     {
-        int error = func(a, out nint out_value);
-        if (error != 0)
-            throw new FheException(error);
+        CheckError(func(a, out nint out_value));
         return out_value;
     }
 
     internal static nint Oper2n<A, B>(OperFunc<A, B> func, A a, B b)
     {
-        int error = func(a, b, out nint out_value);
-        if (error != 0)
-            throw new FheException(error);
+        CheckError(func(a, b, out nint out_value));
         return out_value;
     }
-
-    internal static void Oper2nr<A, B>(Func<A, B, int> func, A a, B b)
-    {
-        int error = func(a, b);
-        if (error != 0)
-            throw new FheException(error);
-    }
-   
 }

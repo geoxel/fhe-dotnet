@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Fhe;
+﻿namespace Fhe;
 
 public sealed class FheClientKey : FheHandle
 {
