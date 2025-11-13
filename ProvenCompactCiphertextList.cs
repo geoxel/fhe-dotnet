@@ -51,4 +51,27 @@ public sealed class ProvenCompactCiphertextList : FheHandle
             return new ProvenCompactCiphertextList(out_value);
         }
     }
+
+    public byte[] SafeSerialize(ulong serialized_size_limit = SAFE_SER_SIZE_LIMIT)
+    {
+        CheckError(SafeNativeMethods.ProvenCompactCiphertextList.SafeSerialize(Handle, out SafeNativeMethods.DynamicBuffer buffer, serialized_size_limit));
+
+        using DynamicBuffer dynamicbuffer = new(buffer);
+        return dynamicbuffer.ToArray();
+    }
+
+    public static unsafe ProvenCompactCiphertextList SafeDeserialize(byte[] data, ulong serialized_size_limit = SAFE_SER_SIZE_LIMIT)
+    {
+        fixed (byte* ptr = data)
+        {
+            var buffer_view = new SafeNativeMethods.DynamicBufferView
+            {
+                pointer = new nint(ptr),
+                length = data.Length,
+            };
+
+            CheckError(SafeNativeMethods.ProvenCompactCiphertextList.SafeDeserialize(buffer_view, serialized_size_limit, out nint out_value));
+            return new ProvenCompactCiphertextList(out_value);
+        }
+    }
 }

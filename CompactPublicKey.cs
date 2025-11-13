@@ -12,12 +12,12 @@ public sealed class CompactPublicKey : FheHandle
     public byte[] Serialize()
     {
         CheckError(SafeNativeMethods.CompactPublicKey.Serialize(Handle, out SafeNativeMethods.DynamicBuffer buffer));
-        
+
         using DynamicBuffer dynamicbuffer = new(buffer);
         return dynamicbuffer.ToArray();
     }
 
-    public static unsafe CompactPublicKey Deserialize(byte[] data, ulong serialized_size_limit = SAFE_SER_SIZE_LIMIT)
+    public static unsafe CompactPublicKey Deserialize(byte[] data)
     {
         fixed (byte* ptr = data)
         {
@@ -27,10 +27,34 @@ public sealed class CompactPublicKey : FheHandle
                 length = data.Length,
             };
 
-            return Oper2(SafeNativeMethods.CompactPublicKey.Deserialize, buffer_view, serialized_size_limit);
+            return Oper1(SafeNativeMethods.CompactPublicKey.Deserialize, buffer_view);
         }
     }
 
+    public byte[] SafeSerialize(ulong serialized_size_limit = SAFE_SER_SIZE_LIMIT)
+    {
+        CheckError(SafeNativeMethods.CompactPublicKey.SafeSerialize(Handle, out SafeNativeMethods.DynamicBuffer buffer, serialized_size_limit));
+
+        using DynamicBuffer dynamicbuffer = new(buffer);
+        return dynamicbuffer.ToArray();
+    }
+
+    public static unsafe CompactPublicKey SafeDeserialize(byte[] data, ulong serialized_size_limit = SAFE_SER_SIZE_LIMIT)
+    {
+        fixed (byte* ptr = data)
+        {
+            var buffer_view = new SafeNativeMethods.DynamicBufferView
+            {
+                pointer = new nint(ptr),
+                length = data.Length,
+            };
+
+            return Oper2(SafeNativeMethods.CompactPublicKey.SafeDeserialize, buffer_view, serialized_size_limit);
+        }
+    }
+
+    private static CompactPublicKey Oper1<A>(OperFunc<A> func, A a) =>
+        new CompactPublicKey(Oper1n(func, a));
     private static CompactPublicKey Oper2<A, B>(OperFunc<A, B> func, A a, B b) =>
         new CompactPublicKey(Oper2n(func, a, b));
 }

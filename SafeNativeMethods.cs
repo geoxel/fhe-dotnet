@@ -14,7 +14,7 @@ internal static partial class SafeNativeMethods
     private const string LibraryPrefix = "lib";
     private const string LibraryExtension = ".dylib";
 #else
-#error Unsupported platform
+#error "Unsupported platform"
 #endif
 
     private const string LibraryPath = "../tfhe-rs/target/release/" + LibraryPrefix + "tfhe" + LibraryExtension;
@@ -45,8 +45,14 @@ internal static partial class SafeNativeMethods
         [LibraryImport(LibraryPath, EntryPoint = "compact_public_key_serialize")]
         public static partial int Serialize(nint value, out DynamicBuffer out_buffer);
 
+        [LibraryImport(LibraryPath, EntryPoint = "compact_public_key_deserialize")]
+        public static partial int Deserialize(DynamicBufferView buffer_view, out nint out_value);
+
+        [LibraryImport(LibraryPath, EntryPoint = "compact_public_key_safe_serialize")]
+        public static partial int SafeSerialize(nint value, out DynamicBuffer out_buffer, ulong serialized_size_limit);
+
         [LibraryImport(LibraryPath, EntryPoint = "compact_public_key_safe_deserialize")]
-        public static partial int Deserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
+        public static partial int SafeDeserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
     }
 
     public static partial class CompactPkeCrs
@@ -57,8 +63,14 @@ internal static partial class SafeNativeMethods
         [LibraryImport(LibraryPath, EntryPoint = "compact_pke_crs_serialize")]
         public static partial int Serialize(nint value, [MarshalAs(UnmanagedType.U1)] bool compress, out DynamicBuffer out_buffer);
 
+        [LibraryImport(LibraryPath, EntryPoint = "compact_pke_crs_deserialize")]
+        public static partial int Deserialize(DynamicBufferView buffer_view, out nint out_value);
+
+        [LibraryImport(LibraryPath, EntryPoint = "compact_pke_crs_safe_serialize")]
+        public static partial int SafeSerialize(nint value, [MarshalAs(UnmanagedType.U1)] bool compress, ulong serialized_size_limit, out DynamicBuffer out_buffer);
+
         [LibraryImport(LibraryPath, EntryPoint = "compact_pke_crs_safe_deserialize")]
-        public static partial int Deserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
+        public static partial int SafeDeserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -90,12 +102,6 @@ internal static partial class SafeNativeMethods
     [LibraryImport(LibraryPath, EntryPoint = "destroy_dynamic_buffer")]
     public static partial int DynamicBuffer_Destroy(ref DynamicBuffer buffer);
 
-    // public static partial class CompactCiphertextList
-    // {
-    //     [LibraryImport(LibraryPath, EntryPoint = "compact_ciphertext_list_destroy")]
-    //     public static partial int Destroy(nint value);
-    // }
-
     public static partial class ProvenCompactCiphertextList
     {
         [LibraryImport(LibraryPath, EntryPoint = "proven_compact_ciphertext_list_destroy")]
@@ -108,13 +114,19 @@ internal static partial class SafeNativeMethods
             nint metadata,
             nint metadata_len,
             int compute_load,
-            out nint ProvenCompactCiphertextList);
+            out nint provenCompactCiphertextList);
 
         [LibraryImport(LibraryPath, EntryPoint = "proven_compact_ciphertext_list_serialize")]
         public static partial int Serialize(nint value, out DynamicBuffer out_buffer);
 
         [LibraryImport(LibraryPath, EntryPoint = "proven_compact_ciphertext_list_deserialize")]
         public static partial int Deserialize(DynamicBufferView buffer_view, out nint out_value);
+
+        [LibraryImport(LibraryPath, EntryPoint = "proven_compact_ciphertext_list_safe_serialize")]
+        public static partial int SafeSerialize(nint value, out DynamicBuffer out_buffer, ulong serialized_size_limit);
+
+        [LibraryImport(LibraryPath, EntryPoint = "proven_compact_ciphertext_list_safe_deserialize")]
+        public static partial int SafeDeserialize(DynamicBufferView buffer_view, ulong serialized_size_limit, out nint out_value);
     }
 
     public static partial class CompactCiphertextListBuilder
